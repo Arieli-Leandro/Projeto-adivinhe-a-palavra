@@ -1,17 +1,3 @@
-"""
-Faça um jogo para o usuário adivinhar qual a palavra secreta
--Você vai propor uma palavra secreta qualquer e vai dar a possibilidade para o usuário digitar apenas uma letra
-- Quando o usuário digitar uma letra, você vai conferir se a letra digitada está na palavra secreta.
-- Se a letra digitada estiver na palavra secreta; exiba a letra
-- Se a letra digitada não estiver na palavra secreta; exiba *.
-- Faça a cotagem de tentativas do seu usuário
-"""
-
-# -> Adivinhar a letra, e quantas vezes ela aparece
-# -> Tentar adivinhar a palavra inteira
-# -> Pontuação por acerto de letras \ palavra (palvra sendo maior)
-# -> PASSO FINAL: INTERFACE GRÁFICA (TENTAR)
-
 import random
 import nltk
 import winsound
@@ -93,22 +79,67 @@ def adivinhar_palavra_infinito():
         
 def dicas(dicas_disponiveis):
 
-    #Tem que continuar a função de dicas
+    #As dicas vão aparecer somente depois de 3 tentativas de acerto da palavra
 
-    while True:
-        print("Você pode apenas obter duas dicas!")
-        print(f"Dicas disponíveis para o usuário: {dicas_disponiveis}")
-        print("1 - Total de letras da palavra")
-        print("2 - Mostrar a letra inicial")
-        print("3 - Mostrar a letra final")
-        print("4 - Mostrar a letra de uma posição de escolha do usuário")
-        opcao_dica = int(input("Digite a opção da dica que deseja obter:"))
+    print("Você pode apenas obter duas dicas!")
+    print(f"Dicas disponíveis para o usuário: {dicas_disponiveis}")
 
-        if(opcao_dica >=1 and opcao_dica <=4):
-            break
+    if(dicas_disponiveis == 1 or dicas_disponiveis == 2):
+
+        while True:
+        
+            print("1 - Total de letras da palavra")
+            print("2 - Mostrar a letra inicial")
+            print("3 - Mostrar a letra final")
+            print("4 - Mostrar a letra de uma posição de escolha do usuário")
+            opcao_dica = int(input("Digite a opção da dica que deseja obter:"))
+
+            if(opcao_dica >=1 and opcao_dica <=4):
+                break
+            else:
+                winsound.Beep(800, 600)
+                print("Por favor, escolha uma opção válida!")
+        #fecha while
+
+        if(opcao_dica == 1):
+            
+            total_letras_palavra = len(escolha_computador)
+            print(f"A palavra escolhida pelo computador tem {total_letras_palavra} letras!")
+            dicas_disponiveis = dicas_disponiveis - 1
+            return dicas_disponiveis
+        
+        elif(opcao_dica == 2):
+
+            print(f"A primeira letra da palavra escolhida pelo computador é: '{escolha_computador[0]}'")
+            dicas_disponiveis = dicas_disponiveis - 1
+            return dicas_disponiveis
+        
+        elif(opcao_dica == 3):
+
+            
+            auxiliar = len(escolha_computador)
+            print(f"A última letra da palavra escolhida pelo computador é: '{escolha_computador[auxiliar-1]}'")
+            dicas_disponiveis = dicas_disponiveis - 1
+            return dicas_disponiveis
+
         else:
-            winsound.Beep(800, 600)
-            print("Por favor, escolha uma opção válida!")
+
+            while True:
+                posicao = int(input(f"Digite um número referente á posição da letra da palavra que deseja descobrir: (válido de 0 á {auxiliar - 1})"))
+
+                if(posicao >= 0 and posicao <=(auxiliar -1)):
+                    break
+                else:
+                    winsound.Beep(800, 600)
+                    print("Por favor, digite uma posição válida!")
+            #fecha while
+            print(f"A letra da posição {posicao} da palavra escolhida pelo computador é: '{escolha_computador[posicao]}'")
+            dicas_disponiveis = dicas_disponiveis - 1
+            return dicas_disponiveis
+        #fecha else
+    else:
+        print("Suas dicas disponíveis já acabaram!")
+    
 
 #fecha função dicas
 
@@ -121,7 +152,6 @@ tentativa_jogador = 0
 
 contador_dicas = 2
 
-#Tem que estilizar o códigp
 
 while True:
 
@@ -231,7 +261,32 @@ while True:
         #fecha while
 
         if(opcao_continuar_jogo == 1):
+
+            if(contador_tentativas >= 3 and (contador_dicas == 1 or contador_dicas == 2)):
+
+                while True:
+                    print("Deseja obter uma dica?")
+                    print("1 - Sim")
+                    print("2 - Não")
+                    opcao_dica = int(input("Digite sua opção:"))
+
+                    if(opcao_dica == 1 or opcao_dica == 2):
+                        break
+                    else:
+                        winsound.Beep(800, 600)
+                        print("Por favor, escolha uma opção válida!")
+                #fecha while
+
+                if(opcao_dica == 1):
+
+                    contador_dicas = dicas(contador_dicas)
+
+                else:
+                    print(f"Caso queira utilizar, você ainda têm {contador_dicas} dicas restantes!")
+            #fecha if dicas
+
             while True:
+
                 print("Escolha uma opção:")
                 print("1 - Adivinhar a letra")
                 print("2 - Adivinhar a palavra")
