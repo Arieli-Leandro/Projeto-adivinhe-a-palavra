@@ -247,7 +247,7 @@ limitas as palavras de acordo com a dificuldade escolhida (-A)
 partida = modo_Jogo()
 
 qtd_tentativas = partida[0]
-dicas = partida[1]
+qtd_dicas = partida[1]
 
 acertou_palavra = False
 
@@ -258,16 +258,16 @@ palavra_atual_usuario = cria_estado_Atual_Palavra(palavra_escolhida_computador)
 while qtd_tentativas != 0 or acertou_palavra == False:
 
     print("\n")
-    
-    while True:
 
-        if primeira_tentativa == True:
+    if primeira_tentativa == True:
            print(palavra_atual_usuario)
 
-        else:
-            atualiza_Estado_Palavra(palavra_atual_usuario, palavra_escolhida_computador, 0, None)
+    else:
+        atualiza_Estado_Palavra(palavra_atual_usuario, palavra_escolhida_computador, 0, None)
 
-        print("\n")
+    print("\n")
+    
+    while True:
 
         print("Selecione uma opção:")
         print("1 - Adivinhar a palavra")
@@ -291,8 +291,31 @@ while qtd_tentativas != 0 or acertou_palavra == False:
     if acertou_palavra == True:
         break
 
+
+    #Se não for a primeira tentativa do usuário e se ele tem dicas disponíveis, ele pode optar por receber dicas para facilitar o jogo
+    if primeira_tentativa == False and qtd_dicas != 0:
+
+        while True:
+
+            if qtd_dicas == 1:
+                print("Você tem apenas mais uma dica disponível, deseja utilizar ela?")
+            else:
+                print(f"Você tem {qtd_dicas} dicas disponíveis, deseja utilizar uma?")
+            print("1 - Sim")
+            print("2 - Não")
+            opcao_utilizar_dicas = int(input("Selecione uma opção: \n"))
+
+            if opcao_utilizar_dicas == 1 or opcao_utilizar_dicas == 2:
+                break
+            else:
+                print("Por favor, selecione uma opção válida!")
+
+        if opcao_utilizar_dicas == 1:
+            Dicas(palavra_atual_usuario, palavra_escolhida_computador)
+            qtd_dicas -= 1                
+
     #Alertar o usuário sobre a quantidade de tentativas que restam a ele
-    qtd_tentativas = qtd_tentativas - 1
+    qtd_tentativas -=  1
     
     if qtd_tentativas > 1:
         print(f"Você tem {qtd_tentativas} tentativas restantes! ")
