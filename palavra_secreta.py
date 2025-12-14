@@ -13,12 +13,10 @@ import pygame #adicionar um som de fundo no final
 # -------------------------------------------------------
 
 # Random esconlhendo qual vai ser a palavra
-
 lista_palavras = words.words()
 
-palavra_escolhida_computador = random.choice(lista_palavras)
+palavra_escolhida_computador = random.choice(lista_palavras).upper()
 print(palavra_escolhida_computador)
-
 
 # =--- FUNÇÕES ---=
 
@@ -42,44 +40,55 @@ def modo_Jogo():
             print("Selecione uma opção válida!")
 
     tentativas_por_usuario = -1
+    dicas_por_dificuldade = -1
 
     match opcao_modo_jogo:
 
         case 1:
 
             tentativas_por_usuario = 12
+            dicas_por_dificuldade = 3
             print(f"Você escolheu o modo Fácil, você terá {tentativas_por_usuario} tentativas para acertar a palavra!")
 
         case 2:
 
             tentativas_por_usuario = 7
+            dicas_por_dificuldade = 2
             print(f"Você escolheu o modo Médio, você terá {tentativas_por_usuario} tentativas para acertar a palavra!")
 
 
         case 3:
 
             tentativas_por_usuario = 5
+            dicas_por_dificuldade = 1
             print(f"Você escolheu o modo Difícil, você terá {tentativas_por_usuario} tentativas para acertar a palavra!")
 
         case 4:
 
             tentativas_por_usuario = 2
+            dicas_por_dificuldade = 0
             print(f"Você escolheu o modo Insano, você terá {tentativas_por_usuario} tentativas para acertar a palavra!")
 
         case 5:
 
             lista_tentativa = [12, 7, 5, 2]
             tentativas_por_usuario = random.choice(lista_tentativa)
+
+            lista_dicas_por_dificuldade = [3, 2, 1, 0]
+            dicas_por_dificuldade = random.choice(lista_dicas_por_dificuldade)
+            
+            
             print(f"Você escolheu o modo Aleatório, você terá {tentativas_por_usuario} tentativas para acertar a palavra!")
 
 
-    return tentativas_por_usuario
+    return [tentativas_por_usuario, dicas_por_dificuldade]
 
 
 #Vai retornar True ou False - Caso retorne True, ele vai interromper o laço while
 def adivinhar_Palavra_Inteira(palavra_usuario, palavra_computador):
     
     if palavra_usuario.upper() == palavra_computador.upper():
+        print("Parabéns! Você acertou a palavra!")
         return True
     else:
         print("Você errou a palavra, tente novamente!")
@@ -102,29 +111,163 @@ def adivinhar_Letra_Palavra(letra_usuario, palavra_computador):
     else:
         print(f"Há {contador_letra_usuario} letras '{letra_usuario}' na palavra escolhida pelo computador!")
     
+    # Acrescenta a letra encontrada pelo usuário no vetor, p/ mostrar via terminal
+    #Atualiza automaticamente a cada acerto refernte a letra do usuário
+    if contador_letra_usuario > 0:  
+        atualiza_Estado_Palavra(palavra_atual_usuario, palavra_escolhida_computador, 1, letra_usuario)
+
     return
 
+
+def cria_estado_Atual_Palavra(palavra_computador):
+
+    palavra_atual_usuario = []
+
+    for i in palavra_computador:
+        palavra_atual_usuario.append("_")
+
+    return palavra_atual_usuario
+
+
+
+def atualiza_Estado_Palavra(palavra_atual_usuario, palavra_computador, opcao, letra_usuario):
+
+    # Opção 0 - Apenas exibe a palavra ao usuário
+    # Opção 1 - Atualiza a palavra com a letra que o usuário acertou
+
+    #Caso mais simples - Apenas exibe a palavra ao usuário
+    if opcao == 0:
+        print(palavra_atual_usuario)
+    else:
+       
+      indice = 0
+
+      for indice, letra in enumerate(palavra_computador):
+        if letra.upper() == letra_usuario.upper():
+            palavra_atual_usuario[indice] = letra_usuario.upper()
+
+    return
+
+
+def Dicas(palavra_atual_usuario, palavra_computador): 
+
+
+    while True:
+
+        print("Selecione uma opção:")
+        print("1 - Revelar letra dos extremos da palavra")
+        print("2 - Revelar letra de uma posição aleatória da palavra")
+        print("3 - Revelar letra de uma posição escolhida")
+        print("4 - Revelar uma letra que não está na palavra")
+        opcao_dica = int(input(""))
+
+        if opcao_dica >= 1 and opcao_dica <= 4:
+            break
+        else:
+            print("Selecione uma opção válida!")
+
+    tamanho_palavra = len(palavra_computador) #Escopo global da função
+    tamanho_max_string = tamanho_palavra - 1 #Escopo global da função
+
+    match opcao_dica:
+        case 1:
+
+            print("Você escolheu a opção 1 - 'Revelar letra dos extremos da palavra'")
+
+            letra_extremo_esquerda = palavra_computador[0]
+            letra_extremo_direita = palavra_computador[tamanho_max_string]
+
+            #Atribuindo a letra á palavra no vetor
+            palavra_atual_usuario[0] = letra_extremo_esquerda
+            palavra_atual_usuario[tamanho_max_string] = letra_extremo_direita
+            print(palavra_atual_usuario)
+        case 2:
+
+            print("Você escolheu a opção 2 - 'Revelar letra de uma posião aleatória da palavra'")
+
+            #tamanho_palavra -1 pq apenas tamanho_palavra sai do range do index
+            posicao_aleatoria = random.randint(0, (tamanho_max_string))
+            letra_posicao_aleatoria = palavra_computador[posicao_aleatoria]
+
+            #Atribuindo a letra á palavra no vetor
+            palavra_atual_usuario[posicao_aleatoria] = letra_posicao_aleatoria
+            print(palavra_atual_usuario)
+            
+        case 3:
+            
+            print("Você escolheu a opção 3 - 'Revelar letra de uma posição escolhida'")
+
+            while True:
+
+                posicao_escolhida = int(input("Digite a posição da letra que deseja descobrir: \n"))
+
+                if posicao_escolhida >= 0 and posicao_escolhida <= tamanho_max_string:
+                    break
+                else:
+                    print("Digite uma posição válida!")
+            #
+
+            letra_ref_posicao_escolhida = palavra_computador[posicao_escolhida]
+
+            #Atribuindo a letra á palavra no vetor
+            palavra_atual_usuario[posicao_escolhida] = letra_ref_posicao_escolhida
+            print(palavra_atual_usuario)
+        case 4:
+            print("Você escolheu a opção 4 - 'Revelar uma letra que não está na palavra'")
+
+
+            #Descobrindo quais letras não estão na palavra escolhida pelo computador
+
+            alfabeto = set("abcdefghijklmnopqrstuvwxyz")
+            lista_letras_in_palavra_computador = set(palavra_computador)
+
+            lista_letras_not_in_palavra_computador = list(alfabeto - lista_letras_in_palavra_computador)
+            
+            #Colocando o random para escolher uma letra da lista de letras que não estão na palavra e retorna essa letra para o usuário
+            letra_sortida_not_in_palavra_computador = random.choice(lista_letras_not_in_palavra_computador)
+            print(f"A letra {letra_sortida_not_in_palavra_computador} não está na palavra escolhida pelo computador!")
+        #
+    #
+
+    return
+
+    
 # -------------------------------------------------------
 
 # =-- AVISOS --=
 """
-implementar a função de adivinhar letra da palavra
-implementar as dicas
-implementar o som de fundo
-implementar o front-end
-
+implementar o som de fundo (-A)
+implementar o front-end (G)
+limitas as palavras de acordo com a dificuldade escolhida (-A)
 """
 
 
 # =-- MAIN --=
 
-qtd_tentativas = modo_Jogo()
+partida = modo_Jogo()
+
+qtd_tentativas = partida[0]
+dicas = partida[1]
 
 acertou_palavra = False
 
+primeira_tentativa = True
+
+palavra_atual_usuario = cria_estado_Atual_Palavra(palavra_escolhida_computador)
+
 while qtd_tentativas != 0 or acertou_palavra == False:
+
+    print("\n")
     
     while True:
+
+        if primeira_tentativa == True:
+           print(palavra_atual_usuario)
+
+        else:
+            atualiza_Estado_Palavra(palavra_atual_usuario, palavra_escolhida_computador, 0, None)
+
+        print("\n")
 
         print("Selecione uma opção:")
         print("1 - Adivinhar a palavra")
@@ -146,7 +289,6 @@ while qtd_tentativas != 0 or acertou_palavra == False:
 
     #Interrompe o laço se o usuário acertar a palavra
     if acertou_palavra == True:
-        print("Parabéns! Você acertou a palavra!")
         break
 
     #Alertar o usuário sobre a quantidade de tentativas que restam a ele
@@ -156,6 +298,10 @@ while qtd_tentativas != 0 or acertou_palavra == False:
         print(f"Você tem {qtd_tentativas} tentativas restantes! ")
     else:
         print(f"Você tem {qtd_tentativas} tentativa restante!")
+
+    primeira_tentativa = False
+
+#fecha while principal
         
         
     
