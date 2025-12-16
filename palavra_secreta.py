@@ -2,21 +2,11 @@
 
 import random
 import nltk
-import winsound
 nltk.download('words')
 from nltk.corpus import words #pip install nltk
 
-import pyfiglet #pip install pyfiglet
-
-import pygame #adicionar um som de fundo no final
 
 # -------------------------------------------------------
-
-# Random esconlhendo qual vai ser a palavra
-lista_palavras = words.words()
-
-palavra_escolhida_computador = random.choice(lista_palavras).upper()
-print(palavra_escolhida_computador)
 
 # =--- FUNÇÕES ---=
 
@@ -32,7 +22,7 @@ def modo_Jogo():
         print("3 - Difícil")
         print("4 - Insano")
         print("5 - Aleatório")
-        opcao_modo_jogo = int(input())
+        opcao_modo_jogo = int(input(""))
 
         if opcao_modo_jogo >= 1 and opcao_modo_jogo <= 5:
             break
@@ -81,8 +71,59 @@ def modo_Jogo():
             print(f"Você escolheu o modo Aleatório, você terá {tentativas_por_usuario} tentativas para acertar a palavra!")
 
 
-    return [tentativas_por_usuario, dicas_por_dificuldade]
+    return [tentativas_por_usuario, dicas_por_dificuldade, opcao_modo_jogo]
 
+
+#Função principal - seleciona a palavra da partida de acordo com o modo de jogo escolhido pelo usuário
+def seleciona_Palavra_Partida(opcao_modo_jogo):
+
+    lista_modo_facil = []
+    lista_modo_medio = []
+    lista_modo_dificil = [] 
+    lista_modo_insano = []
+
+    #Transferindo a biblioteca inteira para uma lista
+    lista_palavras = words.words()
+
+    #Separando a lista principal em listas de acordo com o tamanho da palavra
+    for i in lista_palavras:
+        if len(i) <= 6:
+            lista_modo_facil.append(i)
+        elif len(i) > 6 and len(i) <= 10:
+            lista_modo_medio.append(i)  
+        elif len(i) > 10 and len(i) <= 18:
+            lista_modo_dificil.append(i)
+        elif len(i) > 18:
+            lista_modo_insano.append(i)
+
+    match opcao_modo_jogo:
+        case 1: #Caso das palavras do modo Fácil
+
+            palavra_escolhida_computador = random.choice(lista_modo_facil)
+            palavra_escolhida_computador = str(palavra_escolhida_computador.upper())   
+
+        case 2: #Caso das palavras do modo Médio
+
+            palavra_escolhida_computador = random.choice(lista_modo_medio)
+            palavra_escolhida_computador = str(palavra_escolhida_computador.upper())
+
+        case 3: #Caso das palavras do modo Difícil
+
+            palavra_escolhida_computador = random.choice(lista_modo_dificil)
+            palavra_escolhida_computador = str(palavra_escolhida_computador.upper())
+
+        case 4: #Caso das palavras do modo Insano
+
+            palavra_escolhida_computador = random.choice(lista_modo_insano)
+            palavra_escolhida_computador = str(palavra_escolhida_computador.upper())
+
+        case 5: #Caso das palavras do modo Aleatório
+
+            escolha_lista = random.choice([lista_modo_facil, lista_modo_medio, lista_modo_dificil, lista_modo_insano])
+            palavra_escolhida_computador = random.choice(escolha_lista)
+            palavra_escolhida_computador = str(palavra_escolhida_computador.upper())
+
+    return palavra_escolhida_computador
 
 #Vai retornar True ou False - Caso retorne True, ele vai interromper o laço while
 def adivinhar_Palavra_Inteira(palavra_usuario, palavra_computador):
@@ -236,9 +277,8 @@ def Dicas(palavra_atual_usuario, palavra_computador):
 
 # =-- AVISOS --=
 """
-implementar o som de fundo (-A)
+Implementar tempo e colocar quanto tempo demorou para o jogador descobrir a palavra
 implementar o front-end (G)
-limitas as palavras de acordo com a dificuldade escolhida (-A)
 """
 
 
@@ -248,6 +288,9 @@ partida = modo_Jogo()
 
 qtd_tentativas = partida[0]
 qtd_dicas = partida[1]
+opcao_modo_jogo = partida[2]
+
+palavra_escolhida_computador = seleciona_Palavra_Partida(opcao_modo_jogo)
 
 acertou_palavra = False
 
@@ -317,7 +360,11 @@ while qtd_tentativas != 0 or acertou_palavra == False:
     #Alertar o usuário sobre a quantidade de tentativas que restam a ele
     qtd_tentativas -=  1
     
-    if qtd_tentativas > 1:
+    if qtd_tentativas == 0:
+        print("Suas tentativas acabaram! Você perdeu o jogo!")
+        print(f"A palavra correta era: {palavra_escolhida_computador}")
+        break
+    elif qtd_tentativas > 1: 
         print(f"Você tem {qtd_tentativas} tentativas restantes! ")
     else:
         print(f"Você tem {qtd_tentativas} tentativa restante!")
