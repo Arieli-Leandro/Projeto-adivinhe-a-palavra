@@ -5,6 +5,8 @@ import nltk
 nltk.download('words')
 from nltk.corpus import words #pip install nltk
 
+import time
+
 
 # -------------------------------------------------------
 
@@ -192,7 +194,6 @@ def atualiza_Estado_Palavra(palavra_atual_usuario, palavra_computador, opcao, le
 
 def Dicas(palavra_atual_usuario, palavra_computador): 
 
-
     while True:
 
         print("Selecione uma opção:")
@@ -277,7 +278,6 @@ def Dicas(palavra_atual_usuario, palavra_computador):
 
 # =-- AVISOS --=
 """
-Implementar tempo e colocar quanto tempo demorou para o jogador descobrir a palavra
 implementar o front-end (G)
 """
 
@@ -299,6 +299,8 @@ primeira_tentativa = True
 palavra_atual_usuario = cria_estado_Atual_Palavra(palavra_escolhida_computador)
 
 while qtd_tentativas != 0 or acertou_palavra == False:
+
+    tempo_inicio = time.time()
 
     print("\n")
 
@@ -332,6 +334,7 @@ while qtd_tentativas != 0 or acertou_palavra == False:
 
     #Interrompe o laço se o usuário acertar a palavra
     if acertou_palavra == True:
+        tempo_fim = time.time()
         break
 
 
@@ -372,6 +375,14 @@ while qtd_tentativas != 0 or acertou_palavra == False:
     primeira_tentativa = False
 
 #fecha while principal
-        
+
+#Mostrando quanto tempo o usuário demorou para descobrir a palavra
+if acertou_palavra == True:
+    tempo_total_partida = tempo_fim - tempo_inicio
+    
+    tempo_minutos = int(tempo_total_partida // 60)
+    tempo_segundos = int(tempo_total_partida % 60)
+
+    print(f"Você demorou {tempo_minutos} minutos e {tempo_segundos} segundos para descobrir a palavra!")
         
     
